@@ -1,5 +1,6 @@
 ﻿using IdentityManagerDemo.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityManagerDemo.Controllers
@@ -8,11 +9,13 @@ namespace IdentityManagerDemo.Controllers
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
+        private readonly IEmailSender emailSender;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IEmailSender emailSender)
         {
             this.userManager=userManager;
             this.signInManager=signInManager;
+            this.emailSender=emailSender;
         }
         public IActionResult Index()
         {
@@ -103,7 +106,23 @@ namespace IdentityManagerDemo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    return RedirectToAction("ForgotPasswordConfirmation");
+                }
+
+                var code = await userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }
+                , HttpContext.Request.Scheme);
+
+                await emailSender.SendEmailAsync(model.Email, "Reset Password",
+                    "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">Link</a>");
+
+                return RedirectToAction("ForgotPasswordConfirmation");
+            }
 
             return View(model);
         }
@@ -114,6 +133,12 @@ namespace IdentityManagerDemo.Controllers
         {
             await signInManager.SignOutAsync();
             return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
         }
 
         private void AddErrors(IdentityResult result)

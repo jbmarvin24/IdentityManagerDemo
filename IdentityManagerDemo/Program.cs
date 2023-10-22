@@ -1,5 +1,7 @@
 using IdentityManagerDemo.Data;
+using IdentityManagerDemo.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +19,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(
         opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
         opt.Lockout.MaxFailedAccessAttempts = 5;
     }
-    ).AddEntityFrameworkStores<ApplicationDbContext>();
+    ).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+builder.Services.AddTransient<IEmailSender, MailJetEmailSender>();
 
 var app = builder.Build();
 
