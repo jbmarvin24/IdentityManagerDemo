@@ -20,7 +20,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Register()
+        public ActionResult Register()
         {
             RegisterViewModel registerViewModel = new();
             return View(registerViewModel);
@@ -48,6 +48,38 @@ namespace IdentityManagerDemo.Controllers
 
                 AddErrors(result);
             }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            //if (ModelState.IsValid)
+            //{
+            //    var user = new ApplicationUser
+            //    {
+            //        UserName = model.Email,
+            //        Email= model.Email,
+            //        Name = model.Name
+            //    };
+
+            //    var result = await userManager.CreateAsync(user, model.Password);
+            //    if (result.Succeeded)
+            //    {
+            //        await signInManager.SignInAsync(user, isPersistent: false);
+            //        return RedirectToAction("Index", "Home");
+            //    }
+
+            //    AddErrors(result);
+            //}
 
             return View(model);
         }
