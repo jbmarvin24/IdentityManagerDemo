@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using IdentityManagerDemo.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityManagerDemo.Data
@@ -9,5 +10,7 @@ namespace IdentityManagerDemo.Data
         {
                 
         }
+
+        public DbSet<ApplicationUser> ApplicationUser { get; set; }
     }
 }
