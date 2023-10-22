@@ -72,11 +72,15 @@ namespace IdentityManagerDemo.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, true);
 
                 if (result.Succeeded)
                 {
                     return LocalRedirect(returnurl);
+                }
+                else if (result.IsLockedOut)
+                {
+                    return View("Lockout");
                 }
                 else
                 {
