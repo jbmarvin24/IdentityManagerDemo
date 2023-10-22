@@ -53,22 +53,24 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpGet]
-        public ActionResult Login()
+        public ActionResult Login(string returnurl = null)
         {
+            ViewData["ReturnUrl"] = returnurl;
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnurl = null)
         {
+            ViewData["ReturnUrl"] = returnurl;
             if (ModelState.IsValid)
             {
                 var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return Redirect(returnurl);
                 }
                 else
                 {
