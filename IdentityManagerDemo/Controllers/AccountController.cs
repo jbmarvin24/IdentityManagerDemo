@@ -49,6 +49,14 @@ namespace IdentityManagerDemo.Controllers
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    // Send Email Confirmation Code
+                    var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }
+                        , HttpContext.Request.Scheme);
+
+                    await emailSender.SendEmailAsync(model.Email, "Confirm your account",
+                        "Please confirm your account by clicking here: <a href=\"" + callbackUrl + "\">Link</a>");
+
                     await signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnurl);
                 }
@@ -57,6 +65,24 @@ namespace IdentityManagerDemo.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return View("Error");
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return View("Error");
+            }
+
+            var result = await userManager.ConfirmEmailAsync(user, code);
+            return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
         [HttpGet]
