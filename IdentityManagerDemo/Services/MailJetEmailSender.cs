@@ -33,7 +33,12 @@ namespace IdentityManagerDemo.Services
                    .Build();
 
             // invoke API to send email
-            await client.SendTransactionalEmailAsync(builder);
+            var result = await client.SendTransactionalEmailAsync(builder);
+            if (result.Messages[0].Status != "success")
+            {
+                throw new Exception("Error sending email.");
+            }
+
         }
     }
 }
