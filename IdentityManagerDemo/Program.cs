@@ -21,6 +21,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(
     }
     ).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
+builder.Services.AddAuthentication().AddFacebook(option =>
+{
+    option.AppId = "4049643451715865";
+    option.AppSecret = "c2b8d1b7fe6b43ea23d0a5748cbaa53c";
+});
+
 builder.Services.AddTransient<IEmailSender, MailJetEmailSender>();
 
 var app = builder.Build();
