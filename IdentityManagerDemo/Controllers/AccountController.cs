@@ -41,17 +41,19 @@ namespace IdentityManagerDemo.Controllers
                 await roleManager.CreateAsync(new IdentityRole("User"));
             }
 
-            List<SelectListItem> listItems = new List<SelectListItem>();
-            listItems.Add(new SelectListItem()
+            List<SelectListItem> listItems = new List<SelectListItem>
             {
-                Value = "Admin",
-                Text = "Admin"
-            });
-            listItems.Add(new SelectListItem()
-            {
-                Value = "User",
-                Text = "User"
-            });
+                new SelectListItem()
+                {
+                    Value = "Admin",
+                    Text = "Admin"
+                },
+                new SelectListItem()
+                {
+                    Value = "User",
+                    Text = "User"
+                }
+            };
 
             ViewData["ReturnUrl"] = returnurl;
             RegisterViewModel registerViewModel = new()
@@ -107,6 +109,21 @@ namespace IdentityManagerDemo.Controllers
                 AddErrors(result);
             }
 
+            List<SelectListItem> listItems = new List<SelectListItem>
+            {
+                new SelectListItem()
+                {
+                    Value = "Admin",
+                    Text = "Admin"
+                },
+                new SelectListItem()
+                {
+                    Value = "User",
+                    Text = "User"
+                }
+            };
+
+            model.RoleList = listItems;
             return View(model);
         }
 
