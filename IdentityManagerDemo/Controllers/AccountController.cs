@@ -1,4 +1,5 @@
 ﻿using IdentityManagerDemo.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using System.Text.Encodings.Web;
 
 namespace IdentityManagerDemo.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly UserManager<IdentityUser> userManager;
@@ -27,6 +29,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult Register(string returnurl = null)
         {
             ViewData["ReturnUrl"] = returnurl;
@@ -35,6 +38,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnurl = null)
         {
@@ -72,6 +76,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
@@ -90,6 +95,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult Login(string returnurl = null)
         {
             ViewData["ReturnUrl"] = returnurl;
@@ -98,6 +104,7 @@ namespace IdentityManagerDemo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model, string returnurl = null)
         {
             ViewData["ReturnUrl"] = returnurl;
@@ -131,6 +138,7 @@ namespace IdentityManagerDemo.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
             return View();
@@ -138,6 +146,7 @@ namespace IdentityManagerDemo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)
@@ -162,12 +171,14 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult ResetPassword(string code = null)
         {
             return code == null ? View("Error") : View();
@@ -175,6 +186,7 @@ namespace IdentityManagerDemo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             if (ModelState.IsValid)
@@ -206,12 +218,14 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult ForgotPasswordConfirmation()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public IActionResult ExternalLogin(string provider, string returnurl = null)
         {
@@ -221,6 +235,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback(string returnurl = null, string remoteError = null)
         {
             returnurl = returnurl ?? Url.Content("~/");
@@ -258,6 +273,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnurl = null)
         {
@@ -334,12 +350,14 @@ namespace IdentityManagerDemo.Controllers
             return RedirectToAction(nameof(Index), "Home");
         }
 
+        [HttpGet]
         public IActionResult AuthenticatorConfirmation()
         {
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string returnurl = null)
         {
             var user = await signInManager.GetTwoFactorAuthenticationUserAsync();
@@ -352,6 +370,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyAuthenticatorCode(VerifyAuthenticatorViewModel model)
         {
