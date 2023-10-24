@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace IdentityManagerDemo.Models
 {
@@ -21,6 +23,10 @@ namespace IdentityManagerDemo.Models
         public string ConfirmPassword { get; set; }
 
         public string Name { get; set; }
+
+        [ValidateNever]
+        public IEnumerable<SelectListItem> RoleList { get; set; }
+        public string RoleSelected { get; set; }
 
     }
 }

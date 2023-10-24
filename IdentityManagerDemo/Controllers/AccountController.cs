@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 
@@ -39,8 +40,24 @@ namespace IdentityManagerDemo.Controllers
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
                 await roleManager.CreateAsync(new IdentityRole("User"));
             }
+
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            listItems.Add(new SelectListItem()
+            {
+                Value = "Admin",
+                Text = "Admin"
+            });
+            listItems.Add(new SelectListItem()
+            {
+                Value = "User",
+                Text = "User"
+            });
+
             ViewData["ReturnUrl"] = returnurl;
-            RegisterViewModel registerViewModel = new();
+            RegisterViewModel registerViewModel = new()
+            {
+                RoleList = listItems
+            };
             return View(registerViewModel);
         }
 
@@ -64,6 +81,17 @@ namespace IdentityManagerDemo.Controllers
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+
+                    if (model.RoleSelected != null && model.RoleSelected.Length > 0 && model.RoleSelected == "Admin")
+                    {
+                        await userManager.AddToRoleAsync(user, "Admin");
+                    }
+                    else
+                    {
+                        await userManager.AddToRoleAsync(user, "User");
+                    }
+
+
                     // Send Email Confirmation Code
                     var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }
@@ -297,6 +325,9 @@ namespace IdentityManagerDemo.Controllers
                 var result = await userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
+                    // Set Role by default to User
+                    await userManager.AddToRoleAsync(user, "User");
+
                     result = await userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {

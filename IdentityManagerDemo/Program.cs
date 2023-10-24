@@ -21,6 +21,11 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(
     }
     ).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
+builder.Services.ConfigureApplicationCookie(opt =>
+{
+    opt.AccessDeniedPath = new PathString("/Home/AccessDenied");
+});
+
 builder.Services.AddAuthentication().AddFacebook(option =>
 {
     option.AppId = "4049643451715865";

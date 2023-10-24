@@ -30,8 +30,14 @@ namespace IdentityManagerDemo.Controllers
             return View();
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
         {
             return View();
         }
