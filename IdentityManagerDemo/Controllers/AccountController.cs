@@ -15,13 +15,15 @@ namespace IdentityManagerDemo.Controllers
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly IEmailSender emailSender;
         private readonly UrlEncoder urlEncoder;
+        private readonly RoleManager<IdentityRole> roleManager;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IEmailSender emailSender, UrlEncoder urlEncoder)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IEmailSender emailSender, UrlEncoder urlEncoder, RoleManager<IdentityRole> roleManager)
         {
             this.userManager=userManager;
             this.signInManager=signInManager;
             this.emailSender=emailSender;
             this.urlEncoder=urlEncoder;
+            this.roleManager=roleManager;
         }
         public IActionResult Index()
         {
@@ -30,8 +32,13 @@ namespace IdentityManagerDemo.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult Register(string returnurl = null)
+        public async Task<ActionResult> Register(string returnurl = null)
         {
+            if (!await roleManager.RoleExistsAsync("Admin"))
+            {
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+                await roleManager.CreateAsync(new IdentityRole("User"));
+            }
             ViewData["ReturnUrl"] = returnurl;
             RegisterViewModel registerViewModel = new();
             return View(registerViewModel);
