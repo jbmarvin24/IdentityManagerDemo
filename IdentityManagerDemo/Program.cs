@@ -18,6 +18,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(
         opt.Password.RequiredLength = 5;
         opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
         opt.Lockout.MaxFailedAccessAttempts = 5;
+        opt.SignIn.RequireConfirmedAccount = true;
     }
     ).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
