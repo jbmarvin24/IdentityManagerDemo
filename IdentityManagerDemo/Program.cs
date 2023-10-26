@@ -20,12 +20,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(
         opt.Lockout.MaxFailedAccessAttempts = 5;
         opt.SignIn.RequireConfirmedAccount = true;
     }
-    ).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+    ).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders().AddDefaultUI();
 
-builder.Services.ConfigureApplicationCookie(opt =>
-{
-    opt.AccessDeniedPath = new PathString("/Home/AccessDenied");
-});
+//builder.Services.ConfigureApplicationCookie(opt =>
+//{
+//    opt.AccessDeniedPath = new PathString("/Home/AccessDenied");
+//});
 
 builder.Services.AddAuthentication().AddFacebook(option =>
 {
@@ -36,6 +36,12 @@ builder.Services.AddAuthentication().AddFacebook(option =>
 builder.Services.AddTransient<IEmailSender, MailJetEmailSender>();
 
 builder.Services.AddRazorPages();
+
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+    opt.AddPolicy("UserAndAdmin", policy => policy.RequireRole("Admin").RequireRole("User"));
+});
 
 var app = builder.Build();
 
