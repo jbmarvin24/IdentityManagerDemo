@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(
@@ -41,6 +41,16 @@ builder.Services.AddAuthorization(opt =>
 {
     opt.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
     opt.AddPolicy("UserAndAdmin", policy => policy.RequireRole("Admin").RequireRole("User"));
+    opt.AddPolicy("Admin_CreateAccess", policy => policy.RequireRole("Admin").RequireClaim("Create", "True"));
+    opt.AddPolicy("Admin_Create_Edit_DeleteAccess", policy => policy.RequireRole("Admin").RequireClaim("Create", "True")
+    .RequireClaim("Edit", "True")
+    .RequireClaim("Delete", "True"));
+
+    opt.AddPolicy("Admin_Create_Edit_DeleteAccess_OR_SuperAdmin", policy => policy.RequireAssertion(ctx => (
+        ctx.User.IsInRole("Admin") && ctx.User.HasClaim(c => c.Type == "Create" && c.Value == "True")
+        && ctx.User.HasClaim(c => c.Type == "Edit" && c.Value == "True")
+        && ctx.User.HasClaim(c => c.Type == "Delete" && c.Value == "True")
+    ) || ctx.User.IsInRole("SuperAdmin")));
 });
 
 var app = builder.Build();
