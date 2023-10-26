@@ -24,6 +24,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "OnlySuperAdminChecker")]
         public IActionResult Upsert(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -39,7 +40,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Policy = "OnlySuperAdminChecker")]
+        [Authorize(Policy = "OnlySuperAdminChecker")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upsert(IdentityRole roleObj)
         {
@@ -74,7 +75,7 @@ namespace IdentityManagerDemo.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Policy = "OnlySuperAdminChecker")]
+        [Authorize(Policy = "OnlySuperAdminChecker")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id)
         {

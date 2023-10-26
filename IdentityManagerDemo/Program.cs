@@ -1,8 +1,10 @@
+using IdentityManagerDemo.Authorize;
 using IdentityManagerDemo.Data;
 using IdentityManagerDemo.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +53,8 @@ builder.Services.AddAuthorization(opt =>
         && ctx.User.HasClaim(c => c.Type == "Edit" && c.Value == "True")
         && ctx.User.HasClaim(c => c.Type == "Delete" && c.Value == "True")
     ) || ctx.User.IsInRole("SuperAdmin")));
+
+    opt.AddPolicy("OnlySuperAdminChecker", policy => policy.Requirements.Add(new OnlySuperAdminChecker()));
 });
 
 var app = builder.Build();
