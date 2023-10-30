@@ -49,7 +49,7 @@ namespace IdentityManagerDemo
                 {
                     UserName = "admin@example.com",
                     Email = "admin@example.com",
-                    Name = "Adminitrator",
+                    Name = "Administrator",
                     EmailConfirmed = true
                 };
                 var result = await _userManager.CreateAsync(user, "P@ssw0rd");
