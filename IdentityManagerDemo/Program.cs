@@ -1,3 +1,4 @@
+using IdentityManagerDemo;
 using IdentityManagerDemo.Authorize;
 using IdentityManagerDemo.Data;
 using IdentityManagerDemo.Services;
@@ -61,6 +62,8 @@ builder.Services.AddAuthorization(opt =>
     opt.AddPolicy("OnlySuperAdminChecker", policy => policy.Requirements.Add(new OnlySuperAdminChecker()));
 });
 
+builder.Services.AddTransient<DataSeeder>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -79,6 +82,16 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+
+// Seeding data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dataSeeder = services.GetRequiredService<DataSeeder>();
+    await dataSeeder.SeedDataAsync();
+}
+
 
 app.MapControllerRoute(
     name: "default",
